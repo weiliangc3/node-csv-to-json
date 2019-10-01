@@ -2,17 +2,18 @@ const parse = require('csv-parse/lib/sync');
 const fs = require('fs');
 const util = require('util');
 
+const argv = require('minimist')(process.argv.slice(2));
 const buildFolder = 'build/';
-const originFileName = "redirects-worksheet.csv"
-const destinationFileName = "redirects.json"
+const prefix = argv.prefix || "kbredirect";
+const src = `src/${argv.src || "redirects-worksheet.csv"}`;
+const destinationFileName = argv.destination || "redirects.json"
 
 const destinationFileLocation = buildFolder + destinationFileName;
-
 
 start();
 
 async function start() {
-  const fileContents = await readFile(originFileName);
+  const fileContents = await readFile(src);
   const parsedContents = parse(fileContents, {
     skip_empty_lines: true
   })
@@ -29,7 +30,7 @@ function formatContent(content) {
 
     jsonContent.push(
       {
-        name: `kbredirect${index}`,
+        name: `${prefix}${index}`,
         from: fromValue,
         to: currentValue[1]
       }
